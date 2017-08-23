@@ -214,7 +214,7 @@ class SchuheDE extends CSVPluginGenerator
 			'reduzierter Preis'             => $priceList['recommendedRetailPrice'] > $priceList['price'] ? $priceList['price'] : '',
             'Grundpreis'                    => count($basePriceData) ? number_format((float)$basePriceData['price'], 2, '.','') : '',
             'Grundpreis Einheit'            => count($basePriceData) ? 'pro '.$basePriceData['lot'].' '.$basePriceData['unitLongName'] : '',
-            'Preis01'                       => $priceList['price'],
+            'Preis01'                       => $priceList['price'] ,
             'Preis01ID'                     => $priceList['price'],
             'Preis02'                       => $priceList['price'],
             'Preis02ID'                     => $priceList['price'],
