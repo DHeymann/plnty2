@@ -127,7 +127,8 @@ class SchuheDE extends CSVPluginGenerator
 			'reduzierter Preis',
 			'Grundpreis',
 			'Grundpreis Einheit',
-			'Kategorien',
+            'Preis01',
+            'Kategorien',
 			'Link',
 			'Anzahl Verkäufe',
 			'Schuhbreite',
@@ -215,6 +216,7 @@ class SchuheDE extends CSVPluginGenerator
 		$priceList = $this->elasticExportPriceHelper->getPriceList($variation, $settings, 2, '.');
 
         $basePriceData = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
+        $testPreis1 = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
 
 		$data = [
 			'Identnummer'                   => $variation['id'],
@@ -241,6 +243,7 @@ class SchuheDE extends CSVPluginGenerator
 			'reduzierter Preis'             => $priceList['recommendedRetailPrice'] > $priceList['price'] ? $priceList['price'] : '',
             'Grundpreis'                    => count($basePriceData) ? number_format((float)$basePriceData['price'], 2, '.','') : '',
             'Grundpreis Einheit'            => count($basePriceData) ? 'pro '.$basePriceData['lot'].' '.$basePriceData['unitLongName'] : '',
+            'Preis01'                       => $priceList['price'],
 			'Kategorien'                    => $this->getCategories($variation, $settings),
 			'Link'                          => $this->elasticExportCoreHelper->getMutatedUrl($variation, $settings),
 			'Anzahl Verkäufe'               => $this->getProperty($variationAttributes, $itemPropertyList, 'sold_items'),
