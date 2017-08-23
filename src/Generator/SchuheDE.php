@@ -196,6 +196,23 @@ class SchuheDE extends CSVPluginGenerator
 
         $basePriceData = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
         $testPreis1 = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
+        $temp = $variation['data']['variation'];
+        if (is_array($temp))
+        {
+            $ausgabe_temp = "";
+            foreach ($temp as $name=>$wert)
+            {
+                if (is_array($wert))
+                {
+                    $wert_schreiben = "Array";
+                }else{
+                    $wert_schreiben = "$wert";
+                }
+                $ausgabe_temp.= " $name = $wert_schreiben | ";
+            }
+        }else{
+            $ausgabe_temp = "kein Array";
+        }
 
 		$data = [
 			'Identnummer'                   => $variation['id'],
@@ -214,12 +231,12 @@ class SchuheDE extends CSVPluginGenerator
 			'reduzierter Preis'             => $priceList['recommendedRetailPrice'] > $priceList['price'] ? $priceList['price'] : '',
             'Grundpreis'                    => count($basePriceData) ? number_format((float)$basePriceData['price'], 2, '.','') : '',
             'Grundpreis Einheit'            => count($basePriceData) ? 'pro '.$basePriceData['lot'].' '.$basePriceData['unitLongName'] : '',
-            'Preis01'                       => $priceList['price'] ,
-            'Preis01ID'                     => $priceList['price'],
-            'Preis02'                       => $priceList['price'],
-            'Preis02ID'                     => $priceList['price'],
-            'Preis03'                       => $priceList['price'],
-            'Preis03ID'                     => $priceList['price'],
+            'Preis01'                       => $ausgabe_temp,
+            'Preis01ID'                     => $variation['data']['variation']['variationSalesPrices'][0]['salesPriceId'],
+            'Preis02'                       => $variation['data']['variation']['variationSalesPrices'][1]['price'],
+            'Preis02ID'                     => $variation['data']['variation']['variationSalesPrices'][1]['salesPriceId'],
+            'Preis03'                       => $variation['data']['variation']['variationSalesPrices'][2]['price'],
+            'Preis03ID'                     => $variation['data']['variation']['variationSalesPrices'][2]['salesPriceId'],
 			'Kategorien'                    => $this->getCategories($variation, $settings),
 			'Link'                          => $this->elasticExportCoreHelper->getMutatedUrl($variation, $settings),
 			'Anzahl Verkäufe'               => $this->getProperty($variationAttributes, $itemPropertyList, 'sold_items'),
