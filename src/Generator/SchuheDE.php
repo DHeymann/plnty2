@@ -197,9 +197,10 @@ class SchuheDE extends CSVPluginGenerator
         $basePriceData = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
         $testPreis1 = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
         $temp = $variation['data']['variation'];
+        $temp  = $priceList;
         if (is_array($temp))
         {
-            $ausgabe_temp = "";
+            $ausgabe_temp = "offen";
             foreach ($temp as $name=>$wert)
             {
                 if (is_array($wert))
