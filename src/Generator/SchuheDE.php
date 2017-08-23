@@ -27,17 +27,6 @@ class SchuheDE extends CSVPluginGenerator
     const SCHUHE_DE = 141.00;
 
     /**
-     * @var SalesPriceSearchRepositoryContract
-     */
-    private $salesPriceSearchRepository;
-
-    /**
-     * @var SalesPriceSearchRequest
-     */
-    private $salesPriceSearchRequest;
-
-
-    /**
      * @var ElasticExportCoreHelper $elasticExportCoreHelper
      */
     private $elasticExportCoreHelper;
@@ -86,19 +75,11 @@ class SchuheDE extends CSVPluginGenerator
      */
     public function __construct(
         ArrayHelper $arrayHelper,
-        SalesPriceSearchRequest $salesPriceSearchRequest,
-        SalesPriceSearchRepositoryContract $salesPriceSearchRepositoryContract,
-        CurrencyRepositoryContract $currencyRepositoryContract,
-        UnitNameRepositoryContract $unitNameRepositoryContract,
         AttributeValueNameRepositoryContract $attributeValueNameRepository,
         PropertySelectionRepositoryContract $propertySelectionRepository
     )
     {
         $this->arrayHelper = $arrayHelper;
-        $this->salesPriceSearchRequest = $salesPriceSearchRequest;
-        $this->salesPriceSearchRepository = $salesPriceSearchRepositoryContract;
-        $this->currencyRepository = $currencyRepositoryContract;
-        $this->unitNameRepository = $unitNameRepositoryContract;
         $this->attributeValueNameRepository = $attributeValueNameRepository;
         $this->propertySelectionRepository = $propertySelectionRepository;
     }
@@ -215,8 +196,11 @@ class SchuheDE extends CSVPluginGenerator
         $priceList = $this->getPriceListHeym01($variation, $settings, 2, '.');
 
         $basePriceData = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
-        $testPreis1 = $this->elasticExportPriceHelper->getBasePriceDetails($variation, (float) $priceList['price'], $settings->get('lang'));
-        $temp = $variation['data']['variation'];
+
+        $varID = $variation['id'];
+
+
+
         $temp  = $priceList;
         if (is_array($temp))
         {
@@ -424,67 +408,5 @@ class SchuheDE extends CSVPluginGenerator
         return '';
     }
 
-
-    public function getPriceListHeym01($variation, KeyValue $settings, $decimals = 2, $decSeparator = '.'):array
-    {
-        //$countryId = $settings->get('destination');
-        //$currency = $this->currencyRepository->getCountryCurrency($countryId)->currency;
-
-        // getting the retail price
-        $this->salesPriceSearchRequest->variationId = $variation['id'];
-        $this->salesPriceSearchRequest->referrerId = $settings->get('referrerId');
-        $this->salesPriceSearchRequest->plentyId = $settings->get('plentyId');
-        $this->salesPriceSearchRequest->type = 'default';
-        $this->salesPriceSearchRequest->countryId = $countryId;
-        $this->salesPriceSearchRequest->currency = $currency;
-
-        $salesPriceSearch  = $this->salesPriceSearchRepository->search($this->salesPriceSearchRequest);
-        $price = '';
-        $vatValue = '';
-        $variationRrp = '';
-        $variationSpecialPrice = '';
-
-        if(isset($salesPriceSearch->price))
-        {
-            $price = number_format((float)$salesPriceSearch->price, $decimals, $decSeparator, '');
-        }
-
-        if(isset($salesPriceSearch->vatValue))
-        {
-            $vatValue = $salesPriceSearch->vatValue;
-        }
-
-        // getting the recommended retail price
-        if($settings->get('transferRrp') == self::TRANSFER_RRP_YES)
-        {
-            $this->salesPriceSearchRequest->type = 'rrp';
-            $salesPriceSearch = $this->salesPriceSearchRepository->search($this->salesPriceSearchRequest);
-
-            if(isset($salesPriceSearch->price))
-            {
-                $variationRrp = number_format((float)$salesPriceSearch->price, $decimals, $decSeparator, '');
-            }
-        }
-
-        // getting the special price
-        if($settings->get('transferOfferPrice') == self::TRANSFER_OFFER_PRICE_YES)
-        {
-            $this->salesPriceSearchRequest->type = 'specialOffer';
-            $salesPriceSearch = $this->salesPriceSearchRepository->search($this->salesPriceSearchRequest);
-
-            if(isset($salesPriceSearch->price))
-            {
-                $variationSpecialPrice = number_format((float)$salesPriceSearch->price, $decimals, $decSeparator, '');
-            }
-        }
-
-        return array(
-            'price'                     =>	$price,
-            'recommendedRetailPrice'	=>	$variationRrp,
-            'specialPrice'              =>	$variationSpecialPrice,
-            'vatValue'                  =>	$vatValue,
-            'currency'					=>	$currency
-        );
-    }
 
 }
