@@ -27,6 +27,17 @@ class SchuheDE extends CSVPluginGenerator
     const SCHUHE_DE = 141.00;
 
     /**
+     * @var SalesPriceSearchRepositoryContract
+     */
+    private $salesPriceSearchRepository;
+
+    /**
+     * @var SalesPriceSearchRequest
+     */
+    private $salesPriceSearchRequest;
+
+
+    /**
      * @var ElasticExportCoreHelper $elasticExportCoreHelper
      */
     private $elasticExportCoreHelper;
@@ -75,11 +86,19 @@ class SchuheDE extends CSVPluginGenerator
      */
     public function __construct(
         ArrayHelper $arrayHelper,
+        SalesPriceSearchRequest $salesPriceSearchRequest,
+        SalesPriceSearchRepositoryContract $salesPriceSearchRepositoryContract,
+        CurrencyRepositoryContract $currencyRepositoryContract,
+        UnitNameRepositoryContract $unitNameRepositoryContract,
         AttributeValueNameRepositoryContract $attributeValueNameRepository,
         PropertySelectionRepositoryContract $propertySelectionRepository
     )
     {
         $this->arrayHelper = $arrayHelper;
+        $this->salesPriceSearchRequest = $salesPriceSearchRequest;
+        $this->salesPriceSearchRepository = $salesPriceSearchRepositoryContract;
+        $this->currencyRepository = $currencyRepositoryContract;
+        $this->unitNameRepository = $unitNameRepositoryContract;
         $this->attributeValueNameRepository = $attributeValueNameRepository;
         $this->propertySelectionRepository = $propertySelectionRepository;
     }
